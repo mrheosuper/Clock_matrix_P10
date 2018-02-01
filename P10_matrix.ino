@@ -7,7 +7,6 @@
 #define OE PA3
 SPIClass SPI_2(2); //Create an SPI2 object.
 RTC_DS3231 rtc;
-bool update_ready=0;
 DateTime now;
 uint32_t last_millis;
 int32_t buffer[16];
@@ -135,17 +134,14 @@ void setup()
   //SPI_2.setBitOrder(MSBFIRST); // Set the SPI-2 bit order (*) 
   //SPI_2.setDataMode(SPI_MODE0); //Set the  SPI-2 data mode (**) 
   //Set the SPI speed
-  SPI_2.setClockDivider(SPI_CLOCK_DIV2);    // Slow speed (72 / 64 = 1.125 MHz SPI speed) 
+  SPI_2.setClockDivider(SPI_CLOCK_DIV2);    // Slow speed (72 / 2 = 36 MHz SPI speed) 
   rtc.begin();
 }
 void loop()
 { 
- //if(abs(millis()-last_millis)>200) 
- //{
   now=rtc.now();
-  //last_millis=millis();
   disp_time(now.hour(),now.minute(),now.day(),now.month(),now.second());
- print_matrix(buffer);
+  print_matrix(buffer);
   clear_buffer(buffer);
 }
 void setRow(int8_t row)
@@ -212,7 +208,7 @@ void clear_matrix()
 }
 void clear_buffer(int32_t * data)
 {
-  for(int i=0;i<16;i++)data[i]=0x00000000;
+  for(int i=0;i<16;i++) data[i]=0x00000000;
 }
 void write_number(int32_t * data, int x, int y, int num)
 {
